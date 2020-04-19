@@ -1,8 +1,9 @@
+
 #사용방법
 
 
 ###1. 폴더내에 darkflow 설치
-https://github.com/thtrieu/darkflow 링크에서 git clone 후 readme에 나온 설명대로 설치를 한다.
+[darkflow] [https://github.com/thtrieu/darkflow] github에서 git clone 후 readme에 나온 설명대로 설치를 한다.
 
 
 ###2. ckpt폴더에 weight 파일 다운받기
