@@ -1,0 +1,1 @@
+{'scratch': 8, 'dent': 0, 'glass': 0}
