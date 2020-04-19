@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import math
 
-def average_hash(image, hashSize=8):
+def average_hash(image, hashSize=16):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     resized = cv2.resize(gray, (hashSize, hashSize))
     mean = np.mean(resized)
@@ -21,7 +21,7 @@ def hamming_distance(x, y):
     dist = (aa != bb).sum()
     return dist
 
-def find_match(before_boxes, after_boxes, threshold = 0.09):
+def find_match(before_boxes, after_boxes, threshold = 0.10):
     '''
 
     :param before_boxes: (label, cropped_img_array)

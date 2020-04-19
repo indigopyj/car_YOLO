@@ -172,15 +172,7 @@ def main():
         for i, result in enumerate(results):
             for res in result: # draw bounding boxes
                 label = res['label']
-                if(label == 'scratch'):
-                    n_scratch += 1
-                    color = color1
-                elif(label == 'dent'):
-                    n_dent += 1
-                    color = color2
-                elif(label == 'glass'):
-                    n_glass += 1
-                    color = color3
+
 
                 conf = res['confidence']
                 # bias for finding original coordinates
@@ -188,7 +180,7 @@ def main():
                 bias_y = 0
                 if(i == 1 or i == 3):
                     bias_x = w/3
-                elif(i == 2 or i ==3):
+                if(i == 2 or i ==3):
                     bias_y = h/3
 
 
@@ -213,19 +205,27 @@ def main():
         count = 0
         for i in range(len(nms_res)):
             if nms_res[i]:
-                if (label_list[i] == 'scratch'): color = color1
-                if (label_list[i] == 'dent'): color = color2
-                if (label_list[i] == 'glass'): color = color3
+                if (label_list[i] == 'scratch'):
+                    n_scratch += 1
+                    color = color1
+                if (label_list[i] == 'dent'):
+                    n_dent += 1
+                    color = color2
+                if (label_list[i] == 'glass'):
+                    n_glass += 1
+                    color = color3
                 topxy = boxes[i][0]
                 btmxy = boxes[i][1]
                 cv2.rectangle(yolo_img, topxy, btmxy, color, 4)
                 if(index == 0):
                     before_boxes.append((label_list[i], topxy, btmxy))
+
                 else:
                     after_boxes.append((label_list[i], topxy, btmxy))
                 text_x, text_y = boxes[i][0][0] - 10, boxes[i][0][1] - 10
                 count+=1
                 cv2.putText(yolo_img, label_list[i]+str(count), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2, cv2.LINE_AA)
+
 
         labels['scratch'] = n_scratch
         labels['dent'] = n_dent
@@ -245,7 +245,7 @@ def main():
             save_txt_path = after_yolo_path + os.path.splitext(file_name)[0] + '.txt'
             box_txt_path = after_yolo_path + os.path.splitext(file_name)[0] + '_box.txt'
             box_txt = open(box_txt_path, 'w')  # save box coordinate as txt
-            for tup in before_boxes:
+            for tup in after_boxes:
                 line = str(tup[0]) +" "+ str(tup[1][0]) + " " + str(tup[1][1]) + " " + str(tup[2][0]) + " " +  str(tup[2][1]) + '\n'
                 box_txt.write(line)
             box_txt.close()
