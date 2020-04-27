@@ -21,40 +21,48 @@ def hamming_distance(x, y):
     dist = (aa != bb).sum()
     return dist
 
-def find_match(before_boxes, after_boxes, threshold = 0.10):
+def find_match(before_img, before_boxes, after_img, after_boxes, threshold = 0.10):
     '''
-
-    :param before_boxes: (label, cropped_img_array)
-    :param after_boxes: (label, cropped_img_array)
+    :param before_img : before image-array
+    :param before_boxes: a list of items (label, topx, topy, btmx, btmy)
+    :param after_img : after image-array
+    :param after_boxes: a list of items (label, topx, topy, btmx, btmy)
     :param threshold: threshold for hamming distance
     :return:
     '''
     match_boxes = []
-    #diff_set = []
     same_set = []
-    abs_threshold = 10
 
-    for i, after in enumerate(after_boxes):
+    for i, after_coord in enumerate(after_boxes):
+        '''
+            after_coord : ( label, topx, topy, btmx, btmy)
+        '''
         j = 0
-        for before in before_boxes:
-            hash1 = average_hash(before[1])
-            hash2 = average_hash(after[1])
+        after = after_img[after_coord[2] : after_coord[4], after_coord[1] : after_coord[3]]
+        for before_coord in before_boxes:
+            before = before_img[before_coord[2]: before_coord[4], before_coord[1]: before_coord[3]]
+            hash1 = average_hash(before)
+            hash2 = average_hash(after)
             result = hamming_distance(hash1, hash2) / 256
-            print(result, i, j)
+            #print(result, i, j)
             if (result < threshold):  # different defect
                 same_set.append(i)
 
             j+=1
-    print()
+    #print()
     after_set = set(range(len(after_boxes)))
-    print(after_set)
+    #print(after_set)
     same_set = set(same_set)
-    print(same_set)
+    #print(same_set)
     after_set = after_set.difference(same_set) # get only different defects
-    print(after_set)
-    #diff_set = set(diff_set)
+    #print(after_set)
+
+    print("the different defects are")
+
     for i in after_set:
+        print(after_boxes[i])
         match_boxes.append(after_boxes[i])
+    print()
 
     return match_boxes
 

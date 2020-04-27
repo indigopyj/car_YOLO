@@ -3,6 +3,7 @@ import numpy as np
 import os
 import argparse
 from matching import find_match
+import json
 
 def main():
     '''
@@ -23,46 +24,48 @@ def main():
     after_yolo_path = "photo/yolo/after/"
     template_path = "photo/template/"
 
-    before_box_txt = before_yolo_path + os.path.splitext(file_name)[0]+'_box.txt'
-    after_box_txt = after_yolo_path + os.path.splitext(file_name)[0] + '_box.txt'
-    before_box_file = open(before_box_txt, 'r')
-    after_box_file = open(after_box_txt, 'r')
+    before_box_json = before_yolo_path + os.path.splitext(file_name)[0]+'.json'
+    after_box_json = after_yolo_path + os.path.splitext(file_name)[0] + '.json'
+    with open(before_box_json, 'r') as f:
+        before_box = json.load(f)
+    with open(after_box_json, 'r') as f:
+        after_box = json.load(f)
+
 
     before_img = cv2.imread(before_path + file_name)
     after_img = cv2.imread(after_path + file_name)
 
-    before_boxes = []   # save label and img array of bounding box
-    after_boxes = []    # save label and img array of bounding box
+    before_boxes = []   # save label and coordinate of bounding box
+    after_boxes = []    # save label and coordinate of bounding box
 
-    for line in before_box_file.readlines(): # get box coordinates from txt file
-        word = line[:-1].split(" ") #remove \n
-        before_boxes.append((word[0],
-                             before_img[int(word[2]):int(word[4]),
-                                        int(word[1]):int(word[3])]))
+    # get box coordinates from json file
+    for box in before_box["predictions"]:
+        before_boxes.append((box["label"], int(box["topx"]), int(box["topy"]), int(box["btmx"]), int(box["btmy"])))
 
-    for line in after_box_file.readlines(): # get box coordinates from txt file
-        word = line[:-1].split(" ")  # remove \n
-        after_boxes.append((word[0],
-                            after_img[int(word[2]):int(word[4]),
-                            int(word[1]):int(word[3])]))
+    for box in after_box["predictions"]:
+        after_boxes.append((box["label"], int(box["topx"]), int(box["topy"]), int(box["btmx"]), int(box["btmy"])))
 
-    match_boxes = find_match(before_boxes, after_boxes)
+    match_boxes = find_match(before_img, before_boxes, after_img, after_boxes)
 
-    for i, box in enumerate(match_boxes):
-        new_defect_labels = {'scratch': 0, 'dent': 0, 'glass': 0}
-        new_defect_name = os.path.splitext(file_name)[0] + '_' + str(i + 1)
-        new_defect_path = template_path + new_defect_name + '.jpg'
-        new_defect_txt = template_path + new_defect_name + '.txt'
-        if (box[0] == 'scratch'):
-            new_defect_labels['scratch'] = 1
-        elif (box[0] == 'dent'):
-            new_defect_labels['dent'] = 1
-        elif (box[0] == 'glass'):
-            new_defect_labels['glass'] = 1
-        cv2.imwrite(new_defect_path, box[1])
-        new_defect_txt_file = open(new_defect_txt, 'w')
-        new_defect_txt_file.write(str(new_defect_labels))
-        new_defect_txt_file.close()
+    new_defect_path = template_path + os.path.splitext(file_name)[0] + '.json'
+    new_defects = []
+    new_defect_dict = dict()
+    for box in match_boxes:
+        defect = dict()
+        defect["label"] = box[0]
+        defect["topx"] = box[1]
+        defect["btmx"] = box[3]
+        defect["btmy"] = box[4]
+
+        new_defects.append(defect)
+
+    new_defect_dict["new_defects"] = new_defects
+
+    with open(new_defect_path, 'w', encoding='utf-8') as make_file:
+        json.dump(new_defect_dict, make_file, indent='\t')
+    make_file.close()
+
+
 
 
 if __name__ == '__main__':

@@ -1,0 +1,25 @@
+{
+	"predictions": [
+		{
+			"label": "dent",
+			"topx": 116,
+			"topy": 5,
+			"btmx": 208,
+			"btmy": 158
+		},
+		{
+			"label": "scratch",
+			"topx": 759,
+			"topy": 256,
+			"btmx": 806,
+			"btmy": 311
+		},
+		{
+			"label": "dent",
+			"topx": 399,
+			"topy": 229,
+			"btmx": 603,
+			"btmy": 683
+		}
+	]
+}

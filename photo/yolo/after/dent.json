@@ -1,0 +1,11 @@
+{
+	"predictions": [
+		{
+			"label": "scratch",
+			"topx": 361,
+			"topy": 124,
+			"btmx": 513,
+			"btmy": 204
+		}
+	]
+}

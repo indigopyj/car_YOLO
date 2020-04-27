@@ -1,0 +1,11 @@
+{
+	"predictions": [
+		{
+			"label": "dent",
+			"topx": 519,
+			"topy": 90,
+			"btmx": 575,
+			"btmy": 113
+		}
+	]
+}

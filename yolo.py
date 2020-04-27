@@ -4,6 +4,24 @@ import cv2
 import numpy as np
 import os
 from matching import find_match
+from PIL import Image, ImageStat, ImageEnhance
+import json
+
+# helper function for adjust brightness of input image
+def adjust_brightness(image):
+    temp = image.convert('L')
+    stat = ImageStat.Stat(temp)
+    brightness = (stat.mean[0] / 255)
+
+    brightness_enhancer = ImageEnhance.Brightness(image)
+
+    # change brightness for dark image
+    if brightness < 0.3:
+        image = brightness_enhancer.enhance(1.8 - brightness)
+
+    image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+
+    return image
 
 def cropped_boxes(img, result):
     h, w, _ = img.shape
@@ -22,31 +40,6 @@ def cropped_boxes(img, result):
 
     return boxes
 
-def template_matching(target, template, threshold = 0.78):
-
-    target2 = target.copy()
-    h, w, _ = template.shape
-
-    # methods = ['cv2.TM_CCOEFF_NORMED','cv2.TM_CCORR_NORMED', 'cv2.TM_SQDIFF', 'cv2.TM_SQDIFF_NORMED']
-    meth = 'cv2.TM_CCOEFF_NORMED'
-    method = eval(meth)
-
-    # Apply template Matching
-    res = cv2.matchTemplate(target2, template, method)
-    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-
-    # If the method is TM_SQDIFF or TM_SQDIFF_NORMED, take minimum
-    if method in [cv2.TM_SQDIFF, cv2.TM_SQDIFF_NORMED]:
-        top_left = min_loc
-    else:
-        top_left = max_loc
-    bottom_right = (top_left[0] + w, top_left[1] + h)
-    max_val = np.amax(res)
-    print(max_val)
-    if(threshold > max_val): # new defect
-        return True
-    else:
-        return False
 def iou(box1, box2):
   """Compute the Intersection-Over-Union of two given boxes.
   Args:
@@ -129,14 +122,19 @@ def main():
     after_path = "photo/raw/after/"
     before_yolo_path = "photo/yolo/before/"
     after_yolo_path = "photo/yolo/after/"
-    template_path = "photo/template/"
 
-    before_img = cv2.imread(before_path+file_name)
-    after_img = cv2.imread(after_path + file_name)
+    # before_img = cv2.imread(before_path+file_name)
+    # after_img = cv2.imread(after_path + file_name)
+
+    before_img = Image.open(before_path+file_name)
+    after_img = Image.open(after_path+file_name)
+
+    before_img = adjust_brightness(before_img)
+    after_img = adjust_brightness(after_img)
 
     img_set = [before_img, after_img]
-    after_boxes = []    # save box label and coordinates
-    before_boxes = []   # save box label and coordinates
+
+
     for index, img in enumerate(img_set):
         yolo_img = img.copy()
         h, w, _ = yolo_img.shape
@@ -153,10 +151,6 @@ def main():
         result4 = tfnet.return_predict(img4)
 
         results = [result1, result2, result3, result4]
-        labels = {'scratch': 0, 'dent': 0, 'glass': 0}
-        n_scratch = 0
-        n_dent = 0
-        n_glass = 0
 
         # set color of class randomly
         color1 = (np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255))
@@ -203,57 +197,48 @@ def main():
         # Non-maximum suppression : remove duplicated boxes
         nms_res = nms(boxes, probs, 0.6)
         count = 0
+        predictions = []
+        predict_dict = dict()
         for i in range(len(nms_res)):
             if nms_res[i]:
+                defect = dict()
                 if (label_list[i] == 'scratch'):
-                    n_scratch += 1
                     color = color1
                 if (label_list[i] == 'dent'):
-                    n_dent += 1
                     color = color2
                 if (label_list[i] == 'glass'):
-                    n_glass += 1
                     color = color3
+
                 topxy = boxes[i][0]
                 btmxy = boxes[i][1]
+
+                defect["label"] = label_list[i]
+                defect["topx"] = topxy[0]
+                defect["topy"] = topxy[1]
+                defect["btmx"] = btmxy[0]
+                defect["btmy"] = btmxy[1]
                 cv2.rectangle(yolo_img, topxy, btmxy, color, 4)
-                if(index == 0):
-                    before_boxes.append((label_list[i], topxy, btmxy))
-
-                else:
-                    after_boxes.append((label_list[i], topxy, btmxy))
                 text_x, text_y = boxes[i][0][0] - 10, boxes[i][0][1] - 10
-                count+=1
-                cv2.putText(yolo_img, label_list[i]+str(count), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2, cv2.LINE_AA)
+                count += 1
+                cv2.putText(yolo_img, label_list[i] + str(count), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.8,
+                            color, 2, cv2.LINE_AA)
 
+                predictions.append(defect)
 
-        labels['scratch'] = n_scratch
-        labels['dent'] = n_dent
-        labels['glass'] = n_glass
+        predict_dict["predictions"] = predictions
 
         if(index == 0): # before img
             save_img_path = before_yolo_path+file_name
-            save_txt_path = before_yolo_path+os.path.splitext(file_name)[0]+'.txt'
-            box_txt_path = before_yolo_path+os.path.splitext(file_name)[0]+'_box.txt'
-            box_txt = open(box_txt_path, 'w')  # save box coordinate as txt
-            for tup in before_boxes:
-                line = str(tup[0]) +" "+ str(tup[1][0]) + " " + str(tup[1][1]) + " " + str(tup[2][0]) + " " +  str(tup[2][1]) + '\n'
-                box_txt.write(line)
-            box_txt.close()
-        elif(index == 1):
+            save_json_path = before_yolo_path+os.path.splitext(file_name)[0]+'.json'
+
+        elif(index == 1):   # after img
             save_img_path = after_yolo_path + file_name
-            save_txt_path = after_yolo_path + os.path.splitext(file_name)[0] + '.txt'
-            box_txt_path = after_yolo_path + os.path.splitext(file_name)[0] + '_box.txt'
-            box_txt = open(box_txt_path, 'w')  # save box coordinate as txt
-            for tup in after_boxes:
-                line = str(tup[0]) +" "+ str(tup[1][0]) + " " + str(tup[1][1]) + " " + str(tup[2][0]) + " " +  str(tup[2][1]) + '\n'
-                box_txt.write(line)
-            box_txt.close()
+            save_json_path = after_yolo_path + os.path.splitext(file_name)[0] + '.json'
 
         cv2.imwrite(save_img_path, yolo_img)     # save img
-        txt_file = open(save_txt_path, 'w')      # save txt
-        txt_file.write(str(labels))
-        txt_file.close()
+        with open(save_json_path, 'w', encoding='utf-8') as make_file:
+            json.dump(predict_dict, make_file, indent='\t')
+        make_file.close()
 
 
 if __name__== "__main__":
