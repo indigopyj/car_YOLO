@@ -27,7 +27,45 @@ cfg 폴더에 'yolo-voc-3c-aug.cfg' 넣어주기
 python3 yolo.py imagename.jpg 
 ```
 
-이미지의 yolo 결과가 photo/yolo/before과 photo/yolo/after 폴더에 저장된다.
+이미지의 yolo 결과 이미지와 json 파일이 photo/yolo/before과 photo/yolo/after 폴더에 저장된다.
+
+photo/yolo/before/imagename.jpg -> before image의 yolo result 이미지
+
+photo/yolo/after/imagename.jpg -> after image의 yolo result 이미지
+
+photo/yolo/before/imagename.json -> before image의 yolo result json file
+
+photo/yolo/after/imagename.json -> after image의 yolo result json file
+
+json 형식 예시
+
+```
+{
+	"predictions": [
+		{
+			"label": "scratch",
+			"topx": 289,
+			"topy": 181,
+			"btmx": 366,
+			"btmy": 236
+		},
+		{
+			"label": "scratch",
+			"topx": 520,
+			"topy": 237,
+			"btmx": 538,
+			"btmy": 247
+		},
+		{
+			"label": "scratch",
+			"topx": 352,
+			"topy": 266,
+			"btmx": 430,
+			"btmy": 325
+		}
+	]
+}
+```
 
 
 ### 5. 전후결과 비교하기
