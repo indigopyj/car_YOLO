@@ -29,15 +29,16 @@ python3 yolo.py imagename.jpg
 
 이미지의 yolo 결과 이미지와 json 파일이 photo/yolo/before과 photo/yolo/after 폴더에 저장된다.
 
-photo/yolo/before/imagename.jpg -> before image의 yolo result 이미지
+photo/yolo/before/imagename.jpg 	: before image의 yolo result 이미지
 
-photo/yolo/after/imagename.jpg -> after image의 yolo result 이미지
+photo/yolo/after/imagename.jpg 		: after image의 yolo result 이미지
 
-photo/yolo/before/imagename.json -> before image의 yolo result json file
+photo/yolo/before/imagename.json 	: before image의 yolo result에 대한 json file
 
-photo/yolo/after/imagename.json -> after image의 yolo result json file
+photo/yolo/after/imagename.json 	: after image의 yolo result에 대한 json file
 
-json 형식 예시
+
+#### ex) json file 예시
 
 ```
 {
@@ -75,4 +76,27 @@ json 형식 예시
 python3 compare.py imagename.jpg 
 ```
 
-이미지해싱에 의한 비교결과가 photo/template/before과 photo/template/after 폴더에 저장된다.
+이미지해싱에 의한 비교결과가 photo/template 폴더에 저장된다.
+
+photo/template/imagename.json 	: 이미지 해싱 결과 새로 발생한 결함에 대한 json file
+
+
+#### ex) json file 예시
+```
+{
+	"new_defects": [
+		{
+			"label": "dent",
+			"topx": 170,
+			"btmx": 234,
+			"btmy": 155
+		},
+		{
+			"label": "scratch",
+			"topx": 251,
+			"btmx": 276,
+			"btmy": 198
+		}
+	]
+}
+```
