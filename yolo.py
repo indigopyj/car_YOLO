@@ -153,9 +153,9 @@ def main():
         results = [result1, result2, result3, result4]
 
         # set color of class randomly
-        color1 = (np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255))
-        color2 = (np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255))
-        color3 = (np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255))
+        # color1 = (np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255))
+        # color2 = (np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255))
+        # color3 = (np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255))
 
         # lists for nms
         probs = []
@@ -202,12 +202,12 @@ def main():
         for i in range(len(nms_res)):
             if nms_res[i]:
                 defect = dict()
-                if (label_list[i] == 'scratch'):
-                    color = color1
-                if (label_list[i] == 'dent'):
-                    color = color2
-                if (label_list[i] == 'glass'):
-                    color = color3
+                # if (label_list[i] == 'scratch'):
+                #     color = color1
+                # if (label_list[i] == 'dent'):
+                #     color = color2
+                # if (label_list[i] == 'glass'):
+                #     color = color3
 
                 topxy = boxes[i][0]
                 btmxy = boxes[i][1]
@@ -217,25 +217,25 @@ def main():
                 defect["topy"] = topxy[1]
                 defect["btmx"] = btmxy[0]
                 defect["btmy"] = btmxy[1]
-                cv2.rectangle(yolo_img, topxy, btmxy, color, 4)
-                text_x, text_y = boxes[i][0][0] - 10, boxes[i][0][1] - 10
-                count += 1
-                cv2.putText(yolo_img, label_list[i] + str(count), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.8,
-                            color, 2, cv2.LINE_AA)
+                # cv2.rectangle(yolo_img, topxy, btmxy, color, 4)
+                # text_x, text_y = boxes[i][0][0] - 10, boxes[i][0][1] - 10
+                # count += 1
+                # cv2.putText(yolo_img, label_list[i] + str(count), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.8,
+                #             color, 2, cv2.LINE_AA)
 
                 predictions.append(defect)
 
         predict_dict["predictions"] = predictions
 
         if(index == 0): # before img
-            save_img_path = before_yolo_path+file_name
+            # save_img_path = before_yolo_path+file_name
             save_json_path = before_yolo_path+os.path.splitext(file_name)[0]+'.json'
 
         elif(index == 1):   # after img
-            save_img_path = after_yolo_path + file_name
+            # save_img_path = after_yolo_path + file_name
             save_json_path = after_yolo_path + os.path.splitext(file_name)[0] + '.json'
 
-        cv2.imwrite(save_img_path, yolo_img)     # save img
+        # cv2.imwrite(save_img_path, yolo_img)     # save img
         with open(save_json_path, 'w', encoding='utf-8') as make_file:
             json.dump(predict_dict, make_file, indent='\t')
         make_file.close()
