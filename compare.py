@@ -54,6 +54,7 @@ def main():
         defect = dict()
         defect["label"] = box[0]
         defect["topx"] = box[1]
+        defect["topy"] = box[2]
         defect["btmx"] = box[3]
         defect["btmy"] = box[4]
 

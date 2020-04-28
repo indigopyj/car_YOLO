@@ -88,12 +88,14 @@ photo/template/imagename.json 	: 이미지 해싱 결과 새로 발생한 결함
 		{
 			"label": "dent",
 			"topx": 170,
+			"topy": 110,
 			"btmx": 234,
 			"btmy": 155
 		},
 		{
 			"label": "scratch",
 			"topx": 251,
+			"topy": 185,
 			"btmx": 276,
 			"btmy": 198
 		}

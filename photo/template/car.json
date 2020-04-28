@@ -3,12 +3,14 @@
 		{
 			"label": "dent",
 			"topx": 170,
+			"topy": 110,
 			"btmx": 234,
 			"btmy": 155
 		},
 		{
 			"label": "scratch",
 			"topx": 251,
+			"topy": 185,
 			"btmx": 276,
 			"btmy": 198
 		}
