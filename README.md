@@ -8,6 +8,9 @@
 [darkflow](https://github.com/thtrieu/darkflow) github에서 git clone 후 readme에 나온 설명대로 설치를 한다.
 
 
+추가) car_YOLO내의 모든 파일을 darkflow 폴더 내로 넣어준다. 이때 중복된 파일은 덮어쓰기를 한다.
+
+
 ### 2. ckpt폴더에 weight 파일 다운받기
 
 
