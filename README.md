@@ -33,11 +33,7 @@ python3 yolo.py after imagename.jpg
 
 ```
 
-이미지의 yolo 결과 이미지와 json 파일이 photo/yolo/before과 photo/yolo/after 폴더에 저장된다.
-
-photo/yolo/before/imagename.jpg 	: before image의 yolo result 이미지
-
-photo/yolo/after/imagename.jpg 		: after image의 yolo result 이미지
+이미지의 yolo 결과 json 파일이 photo/yolo/before과 photo/yolo/after 폴더에 저장된다.
 
 photo/yolo/before/imagename.json 	: before image의 yolo result에 대한 json file
 
