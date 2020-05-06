@@ -27,7 +27,10 @@ cfg 폴더에 'yolo-voc-3c-aug.cfg' 넣어주기
 
 
 ```
-python3 yolo.py imagename.jpg 
+python3 yolo.py before imagename.jpg 
+
+python3 yolo.py after imagename.jpg
+
 ```
 
 이미지의 yolo 결과 이미지와 json 파일이 photo/yolo/before과 photo/yolo/after 폴더에 저장된다.
