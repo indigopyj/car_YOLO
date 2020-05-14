@@ -33,11 +33,9 @@ python3 yolo.py after imagename.jpg
 
 ```
 
-이미지의 yolo 결과 json 파일이 photo/yolo/before과 photo/yolo/after 폴더에 저장된다.
+이미지의 yolo 결과 json 파일이 photos/ 폴더에 저장된다.
 
-photo/yolo/before/imagename.json 	: before image의 yolo result에 대한 json file
-
-photo/yolo/after/imagename.json 	: after image의 yolo result에 대한 json file
+results/yolo/imagename.json 	: before or after image의 yolo result에 대한 json file
 
 
 #### ex) json file 예시
@@ -75,12 +73,12 @@ photo/yolo/after/imagename.json 	: after image의 yolo result에 대한 json fil
 
 
 ```
-python3 compare.py imagename.jpg 
+python3 compare.py rentid part
 ```
 
-이미지해싱에 의한 비교결과가 photo/template 폴더에 저장된다.
+이미지해싱에 의한 비교결과가 results/compare 폴더에 저장된다.
 
-photo/template/imagename.json 	: 이미지 해싱 결과 새로 발생한 결함에 대한 json file
+results/compare/rentid_part.json 	: 이미지 해싱 결과 새로 발생한 결함에 대한 json file
 
 
 #### ex) json file 예시
