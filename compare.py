@@ -22,7 +22,7 @@ def main():
 
     args = parser.parse_args()
     rent_id = args.rent_id
-    part = args.rent_id
+    part = args.part
 
     file_name = rent_id + "_" + part  # ex. 1234_ff
     before_file_name = file_name + "_b"  # ex. 1234_ff_b
