@@ -24,9 +24,9 @@ def main():
     rent_id = args.rent_id
     part = args.rent_id
 
-    file_name = rent_id + "_" + part + "_"  # ex. 1234_ff_
-    before_file_name = file_name + "b"  # ex. 1234_ff_b
-    after_file_name = file_name + "a"   # ex. 1234_ff_a
+    file_name = rent_id + "_" + part  # ex. 1234_ff
+    before_file_name = file_name + "_b"  # ex. 1234_ff_b
+    after_file_name = file_name + "_a"   # ex. 1234_ff_a
 
     photo_path = "photos/"
     yolo_path = "results/yolo/"
@@ -55,7 +55,7 @@ def main():
 
     match_boxes = find_match(before_img, before_boxes, after_img, after_boxes)
 
-    new_defect_path = template_path + os.path.splitext(file_name)[0] + '.json'
+    new_defect_path = compare_path + file_name + '.json'
     new_defects = []
     new_defect_dict = dict()
     for box in match_boxes:
