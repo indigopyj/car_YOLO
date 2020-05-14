@@ -8,32 +8,40 @@ import json
 def main():
     '''
             arguemt example:
-                python3 compare.py filename
+                python3 compare.py rent_id part
+            rentid : ex. 1234
+                    unique rent id
+            part : choose one of ['ff', 'ft', 'bf', 'bt', 'lf', 'lb', 'rf', 'rb']
             filename : ex. 1234_profile.jpg
                     file name of before and after images. They have same name but in different directories.
     '''
 
     parser = argparse.ArgumentParser(description='Arguments for predicting yolo result')
-    parser.add_argument('file_name', type=str, help="target file name for yolo")
+    parser.add_argument('rent_id', type=str, help="unique rent id for comparison")
+    parser.add_argument('part', type=str, help="one of positions of the car")
+
     args = parser.parse_args()
-    file_name = args.file_name
+    rent_id = args.rent_id
+    part = args.rent_id
 
-    before_path = "photo/raw/before/"
-    after_path = "photo/raw/after/"
-    before_yolo_path = "photo/yolo/before/"
-    after_yolo_path = "photo/yolo/after/"
-    template_path = "photo/template/"
+    file_name = rent_id + "_" + part + "_"  # ex. 1234_ff_
+    before_file_name = file_name + "b"  # ex. 1234_ff_b
+    after_file_name = file_name + "a"   # ex. 1234_ff_a
 
-    before_box_json = before_yolo_path + os.path.splitext(file_name)[0]+'.json'
-    after_box_json = after_yolo_path + os.path.splitext(file_name)[0] + '.json'
+    photo_path = "photos/"
+    yolo_path = "results/yolo/"
+    compare_path = "results/compare/"
+
+    before_box_json = yolo_path + before_file_name +'.json'
+    after_box_json = yolo_path + after_file_name + '.json'
     with open(before_box_json, 'r') as f:
         before_box = json.load(f)
     with open(after_box_json, 'r') as f:
         after_box = json.load(f)
 
 
-    before_img = cv2.imread(before_path + file_name)
-    after_img = cv2.imread(after_path + file_name)
+    before_img = cv2.imread(photo_path + before_file_name + ".png")
+    after_img = cv2.imread(photo_path + after_file_name + ".png")
 
     before_boxes = []   # save label and coordinate of bounding box
     after_boxes = []    # save label and coordinate of bounding box
