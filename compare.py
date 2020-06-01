@@ -40,8 +40,8 @@ def main():
         after_box = json.load(f)
 
 
-    before_img = cv2.imread(photo_path + before_file_name + ".png")
-    after_img = cv2.imread(photo_path + after_file_name + ".png")
+    before_img = cv2.imread(photo_path + before_file_name + ".jpg")
+    after_img = cv2.imread(photo_path + after_file_name + ".jpg")
 
     before_boxes = []   # save label and coordinate of bounding box
     after_boxes = []    # save label and coordinate of bounding box

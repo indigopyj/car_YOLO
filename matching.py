@@ -21,7 +21,7 @@ def hamming_distance(x, y):
     dist = (aa != bb).sum()
     return dist
 
-def find_match(before_img, before_boxes, after_img, after_boxes, threshold = 0.10):
+def find_match(before_img, before_boxes, after_img, after_boxes, threshold = 0.15):
     '''
     :param before_img : before image-array
     :param before_boxes: a list of items (label, topx, topy, btmx, btmy)
@@ -44,7 +44,7 @@ def find_match(before_img, before_boxes, after_img, after_boxes, threshold = 0.1
             hash1 = average_hash(before)
             hash2 = average_hash(after)
             result = hamming_distance(hash1, hash2) / 256
-            #print(result, i, j)
+            print(result, i, j)
             if (result < threshold):  # different defect
                 same_set.append(i)
 

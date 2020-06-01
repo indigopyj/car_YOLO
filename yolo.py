@@ -1,3 +1,6 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+
 from darkflow.net.build import TFNet
 import argparse
 import cv2
@@ -6,6 +9,7 @@ import os
 from matching import find_match
 from PIL import Image, ImageStat, ImageEnhance
 import json
+
 
 # helper function for adjust brightness of input image
 def adjust_brightness(image):
@@ -102,12 +106,16 @@ def nms(boxes, probs, threshold):
 
 def yolo_run(state, file_name, tfnet):
 
+    '''
     if state == "before":
-        folder_path = "photo/raw/before/"
-        yolo_path = "photo/yolo/before/"
+        folder_path = "photos/before/"
+        yolo_path = "results/yolo/before/"
     else:
-        folder_path = "photo/raw/after/"
-        yolo_path = "photo/yolo/after/"
+        folder_path = "photos/after/"
+        yolo_path = "results/yolo/after/"
+    '''
+    folder_path='photos/'
+    yolo_path='results/yolo/'
 
     img = Image.open(folder_path + file_name)
     img = adjust_brightness(img)
@@ -140,6 +148,14 @@ def yolo_run(state, file_name, tfnet):
             label = res['label']
 
             conf = res['confidence']
+
+            if(label == "dent"):
+                if(conf < 0.3) : continue
+            else:
+                if(conf <0.52) : continue
+
+            print(conf, label)
+
             # bias for finding original coordinates
             bias_x = 0
             bias_y = 0
@@ -171,7 +187,8 @@ def yolo_run(state, file_name, tfnet):
             defect = dict()
 
             topxy = boxes[i][0]
-            btmxy = boxes[i][1]
+            btmxy = boxes[i][1]                
+            
 
             defect["label"] = label_list[i]
             defect["topx"] = topxy[0]
@@ -208,7 +225,7 @@ def main():
     args = parser.parse_args()
     file_name = args.file_name
     state = args.state
-    options = {"model" : "cfg/yolo-voc-3c-aug.cfg", "load":5068, "threshold":0.35, "gpu" : 1.0}
+    options = {"model" : "cfg/yolo-voc-3c-aug.cfg", "load":5068, "threshold":0.2, "gpu" : 1.0}
 
     tfnet = TFNet(options)
 
